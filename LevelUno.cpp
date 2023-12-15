@@ -32,6 +32,7 @@ LevelUno::~LevelUno()
     delete[]  m_state.P1;
     delete[]  m_state.P2;
     delete    m_state.map;
+    Mix_FreeChunk(m_state.dead_sfx);
 }
 
 void LevelUno::initialise()
@@ -52,7 +53,7 @@ void LevelUno::initialise()
     m_state.P1[0].set_movement(glm::vec3(0.0f));
     m_state.P1[0].set_speed(2.5f);
     m_state.P1[0].set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
-    m_state.P1[0].m_texture_id = Utility::load_texture("assets/yuuka trans.png");
+    m_state.P1[0].m_texture_id = Utility::load_texture("assets/man1.png");
     m_state.P1[0].set_wh(1.0f, 3.0f);
     m_state.P1[0].set_scale(glm::vec3(1.0f, 3.0f, 1.0f));
 
@@ -77,7 +78,7 @@ void LevelUno::initialise()
      Enemies' stuff */
 
     m_state.P2[0].facing_right = false;
-    m_state.P2[0].m_texture_id = Utility::load_texture("assets/yuuka trans.png");
+    m_state.P2[0].m_texture_id = Utility::load_texture("assets/man2.png");
     m_state.P2[0].set_entity_type(ENEMY);
     m_state.P2[0].set_ai_type(DUMBO);
     m_state.P2[0].set_ai_state(CHILL);
@@ -119,13 +120,28 @@ void LevelUno::initialise()
     m_state.P2[2].set_scale(glm::vec3(2.0f, 0.5f, 1.0f));
     m_state.P2[2].deactivate();
    
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+    m_state.dead_sfx = Mix_LoadWAV("assets/music/dead.mp3");
+
 }
 
 void LevelUno::update(float delta_time)
 {
     m_state.P1[0].update(delta_time, m_state.P1, m_state.P2, ENEMY_COUNT, m_state.map);
+    if (m_state.P1[0].crouching) {
+        m_state.P1[0].m_texture_id = Utility::load_texture("assets/mancrouch1.png");
+    }
+    else {
+        m_state.P1[0].m_texture_id = Utility::load_texture("assets/man1.png");
+    }
 
     m_state.P2[0].update(delta_time, m_state.P2, m_state.P1, ENEMY_COUNT, m_state.map);
+    if (m_state.P2[0].crouching) {
+        m_state.P2[0].m_texture_id = Utility::load_texture("assets/mancrouch2.png");
+    }
+    else {
+        m_state.P2[0].m_texture_id = Utility::load_texture("assets/man2.png");
+    }
 
     m_state.P1[1].hit_update(delta_time, m_state.P1, m_state.P2, ENEMY_COUNT);
 
@@ -137,7 +153,8 @@ void LevelUno::update(float delta_time)
 
         for (int i = 0; i < 3; i++) {
             if (m_state.P2[i].dead) {
-
+                m_state.P2[0].m_texture_id = Utility::load_texture("assets/man2dead.png");
+                Mix_PlayChannel(-1, m_state.dead_sfx, 0);
                 if (current_death > death_timer) {
                     m_state.next_scene_id = 3;
                 }

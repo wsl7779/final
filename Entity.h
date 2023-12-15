@@ -191,4 +191,5 @@ public:
     void const set_hit_type(HitboxType new_hit_type) { hit_type = new_hit_type; };
     void const set_hit_state(HitboxState new_hit_state) { hit_state = new_hit_state; };
     void const set_scale(glm::vec3 new_scale) { m_scale = new_scale; };
+    void const change_texture(GLuint new_id) { m_texture_id = new_id; };
 };

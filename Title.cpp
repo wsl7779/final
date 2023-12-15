@@ -14,11 +14,16 @@
 
 Title::~Title()
 {
+    Mix_FreeMusic(m_state.bgm);
 }
 
 void Title::initialise()
 {
     m_state.next_scene_id = 1;
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+    m_state.bgm = Mix_LoadMUS("assets/music/dolce.mp3");
+    //Mix_PlayMusic(m_state.bgm, -1);
+    Mix_VolumeMusic(MIX_MAX_VOLUME);
 }
 
 void Title::update(float delta_time)

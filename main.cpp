@@ -293,6 +293,7 @@ void update()
         if (g_current_scene->m_scene != NOT) {
             for (int i = 0; i < 3; i++) {
                 if (g_current_scene->m_state.P1[i].dead) {
+                    g_current_scene->m_state.P1[0].m_texture_id = Utility::load_texture("assets/man1dead.png");
                     g_lose = true;
                 }
             }
